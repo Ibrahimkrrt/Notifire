@@ -7,7 +7,7 @@
     android:orientation="horizontal"
     android:gravity="left"
     android:padding="20dp"
-    tools:context=".allStudent">
+    tools:context=".AllStudent">
 
     <ListView
         android:id="@+id/studentList"

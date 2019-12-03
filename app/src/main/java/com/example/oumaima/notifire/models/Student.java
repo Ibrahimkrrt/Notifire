@@ -1,12 +1,22 @@
 package com.example.oumaima.notifire.models;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class Student {
+public class Student implements Serializable {
+    private int id;
     private String firstName;
     private String lastName;
     private Double mark;
     private Date markDate;
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
 
     public String getFirstName() {
         return firstName;

@@ -26,17 +26,25 @@ public class StudentListAdapter extends ArrayAdapter<Student> {
     @NonNull
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+        int id = getItem(position).getId();
         String name = getItem(position).getFirstName();
+        String surname = getItem(position).getLastName();
 
-        Student testStudent = new Student();
-        testStudent.setFirstName(name);
+        Student selectedStudent = new Student();
+        selectedStudent.setId(id);
+        selectedStudent.setFirstName(name);
+        selectedStudent.setLastName(surname);
 
         LayoutInflater inflater = LayoutInflater.from(context);
         convertView = inflater.inflate(resoucesId,parent,false);
 
-        TextView studentName = (TextView)convertView.findViewById(R.id.studentInfo);
+        TextView studentId = (TextView)convertView.findViewById(R.id.studentId);
+        TextView studentFirstName = (TextView)convertView.findViewById(R.id.studentFistName);
+        TextView studentLastName = (TextView)convertView.findViewById(R.id.studentLastName);
 
-        studentName.setText(name);
+        studentId.setText(Integer.toString(id));
+        studentFirstName.setText(name);
+        studentLastName.setText(surname);
 
         return convertView;
     }
