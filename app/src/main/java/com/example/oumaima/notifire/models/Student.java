@@ -7,8 +7,7 @@ public class Student implements Serializable {
     private int id;
     private String firstName;
     private String lastName;
-    private Double mark;
-    private Date markDate;
+    private int markId;
 
     public int getId() {
         return id;
@@ -34,20 +33,12 @@ public class Student implements Serializable {
         this.lastName = lastName;
     }
 
-    public Double getMark() {
-        return mark;
+    public int getMarkId() {
+        return markId;
     }
 
-    public void setMark(Double mark) {
-        this.mark = mark;
-    }
-
-    public Date getMarkDate() {
-        return markDate;
-    }
-
-    public void setMarkDate(Date markDate) {
-        this.markDate = markDate;
+    public void getMarkId(int mark) {
+        this.markId = mark;
     }
 
     public Student() {

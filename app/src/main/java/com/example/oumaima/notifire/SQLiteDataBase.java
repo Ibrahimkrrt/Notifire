@@ -7,6 +7,9 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 
 /*
  * DataBase Management with SQLite
@@ -26,7 +29,7 @@ public class SQLiteDataBase extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL("CREATE TABLE "+ usersTableName+ " (ID INTEGER PRIMARY KEY AUTOINCREMENT, NAME TEXT, SURNAME TEXT, MARKID INTEGER, USERNAME TEXT, PASSWORD TEXT, ADMIN BOOLEAN)");
-        db.execSQL("CREATE TABLE "+ usersTableName+ " (ID INTEGER PRIMARY KEY AUTOINCREMENT, STUDENTMARK TEXT, MARKDATE DATE, ADMINID INTEGER)");
+        db.execSQL("CREATE TABLE "+ marksTableName+ " (ID INTEGER PRIMARY KEY AUTOINCREMENT, STUDENTMARK TEXT, MARKDATE DATE, ADMINID INTEGER)");
     }
 
     @Override
@@ -36,6 +39,21 @@ public class SQLiteDataBase extends SQLiteOpenHelper {
         onCreate(db);
     }
 
+
+    public boolean insetNewMark(String mark, int adminId) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        Log.d("inInsert", "values : " + mark + " , " +adminId);
+        Date today = new Date();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        contentValues.put("STUDENTMARK", mark);
+        contentValues.put("MARKDATE", dateFormat.format(today));
+        contentValues.put("ADMINID", adminId);
+        long resolver = db.insert(marksTableName,null, contentValues);
+        Log.d("inInsert", "resolver value : " + resolver);
+        if (resolver == -1 ) return false;
+        return true;
+    }
 
     public boolean insetNewStudent(String name, String surname) {
         SQLiteDatabase db = this.getWritableDatabase();
@@ -65,6 +83,18 @@ public class SQLiteDataBase extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor resolver = db.rawQuery("SELECT * FROM "+ usersTableName + " WHERE NOT ADMIN",null);
         return resolver;
+    }
+
+    public String findMarkById(int id){
+        try {
+            SQLiteDatabase db = this.getWritableDatabase();
+            Cursor resolver = db.rawQuery("SELECT * FROM "+ marksTableName + " WHERE ID == "+ id,null);
+            resolver.moveToFirst();
+            return resolver.getString(resolver.getColumnIndex("STUDENTMARK"));
+        }catch (NullPointerException ex){
+            return "0";
+        }
+
     }
 }
 

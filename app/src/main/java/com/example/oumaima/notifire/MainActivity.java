@@ -42,8 +42,8 @@ public class MainActivity extends AppCompatActivity {
                 else Toast.makeText(MainActivity.this, "Data rejected ",Toast.LENGTH_LONG).show();
             }
         });
-
     }
+
     public void openSelectionActivity(View view){
         Intent intent = new Intent(this, AllStudent.class);
         //intent.putExtra(string,value);

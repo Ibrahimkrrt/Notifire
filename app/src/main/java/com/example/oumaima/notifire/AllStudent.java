@@ -56,7 +56,7 @@ public class AllStudent extends AppCompatActivity {
     private void showStudentData() {
         Cursor results = notifireDatabase.selectAllStudent();
         results.moveToFirst();
-        while ( !results.isAfterLast()){
+        while ( !results.isAfterLast() ){
             student = new Student();
             student.setId(results.getInt(results.getColumnIndex("ID")));
             student.setFirstName(results.getString(results.getColumnIndex("NAME")));
