@@ -9,15 +9,15 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
-import com.example.oumaima.notifire.models.Student;
+import com.example.oumaima.notifire.models.User;
 
 import java.util.ArrayList;
 
-public class StudentListAdapter extends ArrayAdapter<Student> {
+public class StudentListAdapter extends ArrayAdapter<User> {
     private Context context;
     int resoucesId;
 
-    public StudentListAdapter(@NonNull Context context, int resource, @NonNull ArrayList<Student> objects) {
+    public StudentListAdapter(@NonNull Context context, int resource, @NonNull ArrayList<User> objects) {
         super(context, resource, objects);
         this.context = context;
         resoucesId = resource;
@@ -29,11 +29,13 @@ public class StudentListAdapter extends ArrayAdapter<Student> {
         int id = getItem(position).getId();
         String name = getItem(position).getFirstName();
         String surname = getItem(position).getLastName();
+        int markId = getItem(position).getMarkId();
 
-        Student selectedStudent = new Student();
-        selectedStudent.setId(id);
-        selectedStudent.setFirstName(name);
-        selectedStudent.setLastName(surname);
+        User selectedUser = new User();
+        selectedUser.setId(id);
+        selectedUser.setFirstName(name);
+        selectedUser.setLastName(surname);
+        selectedUser.setMarkId(markId);
 
         LayoutInflater inflater = LayoutInflater.from(context);
         convertView = inflater.inflate(resoucesId,parent,false);

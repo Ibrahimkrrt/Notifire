@@ -28,8 +28,10 @@ public class SQLiteDataBase extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL("CREATE TABLE "+ usersTableName+ " (ID INTEGER PRIMARY KEY AUTOINCREMENT, NAME TEXT, SURNAME TEXT, MARKID INTEGER, USERNAME TEXT, PASSWORD TEXT, ADMIN BOOLEAN)");
+        db.execSQL("CREATE TABLE "+ usersTableName+ " (ID INTEGER PRIMARY KEY AUTOINCREMENT, EMAIL TEXT UNIQUE, PASSWORD TEXT, NAME TEXT, SURNAME TEXT, MARKID INTEGER, USERNAME TEXT, PASSWORD TEXT, ADMIN BOOLEAN)");
         db.execSQL("CREATE TABLE "+ marksTableName+ " (ID INTEGER PRIMARY KEY AUTOINCREMENT, STUDENTMARK TEXT, MARKDATE DATE, ADMINID INTEGER)");
+        Log.d("onCreacte", "values : creacted");
+
     }
 
     @Override
@@ -39,22 +41,19 @@ public class SQLiteDataBase extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-
-    public boolean insetNewMark(String mark, int adminId) {
+    public void Recreate() {
         SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues contentValues = new ContentValues();
-        Log.d("inInsert", "values : " + mark + " , " +adminId);
-        Date today = new Date();
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        contentValues.put("STUDENTMARK", mark);
-        contentValues.put("MARKDATE", dateFormat.format(today));
-        contentValues.put("ADMINID", adminId);
-        long resolver = db.insert(marksTableName,null, contentValues);
-        Log.d("inInsert", "resolver value : " + resolver);
-        if (resolver == -1 ) return false;
-        return true;
+        db.execSQL("DROP TABLE IF EXISTS "+usersTableName);
+        db.execSQL("DROP TABLE IF EXISTS "+marksTableName);
+        db.execSQL("CREATE TABLE "+ usersTableName+ " (ID INTEGER PRIMARY KEY AUTOINCREMENT, NAME TEXT, SURNAME TEXT, MARKID INTEGER, USERNAME TEXT, PASSWORD TEXT, ADMIN BOOLEAN)");
+        db.execSQL("CREATE TABLE "+ marksTableName+ " (ID INTEGER PRIMARY KEY AUTOINCREMENT, STUDENTMARK TEXT, MARKDATE DATE, ADMINID INTEGER)");
+        Log.d("onCreacte", "values : creacted");
+
     }
 
+    /// <summary>
+    /// User SQLite actions
+    /// </summary>
     public boolean insetNewStudent(String name, String surname) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
@@ -85,16 +84,38 @@ public class SQLiteDataBase extends SQLiteOpenHelper {
         return resolver;
     }
 
-    public String findMarkById(int id){
-        try {
-            SQLiteDatabase db = this.getWritableDatabase();
-            Cursor resolver = db.rawQuery("SELECT * FROM "+ marksTableName + " WHERE ID == "+ id,null);
-            resolver.moveToFirst();
-            return resolver.getString(resolver.getColumnIndex("STUDENTMARK"));
-        }catch (NullPointerException ex){
-            return "0";
-        }
-
+    public boolean updateStudentMarkId(String studentId,String markId) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put("MARKID",markId);
+        long resolver =db.update(usersTableName,contentValues,"ID = " +studentId,null);
+        if (resolver == -1 ) return false;
+        return true;
     }
+
+    /// <summary>
+    /// Marks SQLite actions
+    /// </summary>
+    public long insetNewMark(String mark, int adminId) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+
+        Date today = new Date();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Log.d("inInsert", "values : " + mark + " , "+ dateFormat.format(today) + " , " +adminId);
+        contentValues.put("STUDENTMARK", mark);
+        contentValues.put("MARKDATE", dateFormat.format(today));
+        contentValues.put("ADMINID", adminId);
+        long resolver = db.insert(marksTableName,null, contentValues);
+        Log.d("inInsert", "resolver value : " + resolver);
+        return resolver;
+    }
+
+    public Cursor findMarkById(int id){
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor resolver = db.rawQuery("SELECT * FROM "+ marksTableName + " WHERE ID = "+ id,null);
+        return resolver;
+    }
+
 }
 

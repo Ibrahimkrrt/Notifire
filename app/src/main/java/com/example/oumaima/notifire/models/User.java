@@ -3,7 +3,7 @@ package com.example.oumaima.notifire.models;
 import java.io.Serializable;
 import java.util.Date;
 
-public class Student implements Serializable {
+public class User implements Serializable {
     private int id;
     private String firstName;
     private String lastName;
@@ -37,10 +37,10 @@ public class Student implements Serializable {
         return markId;
     }
 
-    public void getMarkId(int mark) {
+    public void setMarkId(int mark) {
         this.markId = mark;
     }
 
-    public Student() {
+    public User() {
     }
 }

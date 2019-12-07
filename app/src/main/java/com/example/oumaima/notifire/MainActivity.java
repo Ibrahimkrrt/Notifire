@@ -14,7 +14,7 @@ public class MainActivity extends AppCompatActivity {
     EditText sFistName, sLastName, sMark;
     Button clear, create, selectAll;
     //DatabaseReference fireBaseReff;
-    //Student student;
+    //User user;
 
     SQLiteDataBase notifireDatabase;
 
@@ -24,7 +24,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         notifireDatabase = new SQLiteDataBase(this);
-
+        //notifireDatabase.Recreate();
         sFistName = (EditText)findViewById(R.id.sFirstName);
         sLastName = (EditText)findViewById(R.id.sLastName);
         sMark = (EditText)findViewById(R.id.sMark);
