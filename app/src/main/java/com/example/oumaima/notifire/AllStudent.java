@@ -1,6 +1,7 @@
 package com.example.oumaima.notifire;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -16,7 +17,6 @@ import java.util.ArrayList;
 public class AllStudent extends AppCompatActivity {
 
     ListView studentList;
-    // DatabaseReference fireBaseReff;
     User user;
     ArrayList<User> userArrayList;
     ArrayList<User> sList;

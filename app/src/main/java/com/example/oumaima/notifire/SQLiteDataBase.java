@@ -19,7 +19,6 @@ public class SQLiteDataBase extends SQLiteOpenHelper {
     public static final String dataBaseName = "NOTIFIRE.DB";
     public static final String usersTableName = "USERS";
     public static final String marksTableName = "MARKS";
-    public static final String adminsTableName = "ADMINS";
 
     public SQLiteDataBase(Context context) {
         super(context, dataBaseName, null, 1);
@@ -28,7 +27,19 @@ public class SQLiteDataBase extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL("CREATE TABLE "+ usersTableName+ " (ID INTEGER PRIMARY KEY AUTOINCREMENT, EMAIL TEXT UNIQUE, PASSWORD TEXT, NAME TEXT, SURNAME TEXT, MARKID INTEGER, USERNAME TEXT, PASSWORD TEXT, ADMIN BOOLEAN)");
+        db.execSQL("CREATE TABLE "+ usersTableName+ " (ID INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                "EMAIL TEXT UNIQUE, " +
+                "PASSWORD TEXT, " +
+                "NAME TEXT, " +
+                "SURNAME TEXT, " +
+                "MARKID INTEGER, " +
+                "USERNAME TEXT, " +
+                "PASSWORD TEXT, " +
+                "SCHOOL TEXT, " +
+                "LEVEL TEXT, " +
+                "STUDENTCLASS TEXT, " +
+                "STUDENTGROUP TEXT, " +
+                "ADMIN BOOLEAN)");
         db.execSQL("CREATE TABLE "+ marksTableName+ " (ID INTEGER PRIMARY KEY AUTOINCREMENT, STUDENTMARK TEXT, MARKDATE DATE, ADMINID INTEGER)");
         Log.d("onCreacte", "values : creacted");
 
@@ -45,7 +56,7 @@ public class SQLiteDataBase extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         db.execSQL("DROP TABLE IF EXISTS "+usersTableName);
         db.execSQL("DROP TABLE IF EXISTS "+marksTableName);
-        db.execSQL("CREATE TABLE "+ usersTableName+ " (ID INTEGER PRIMARY KEY AUTOINCREMENT, NAME TEXT, SURNAME TEXT, MARKID INTEGER, USERNAME TEXT, PASSWORD TEXT, ADMIN BOOLEAN)");
+        db.execSQL("CREATE TABLE "+ usersTableName+ " (ID INTEGER PRIMARY KEY AUTOINCREMENT, NAME TEXT, SURNAME TEXT, MARKID INTEGER, EMAIL TEXT UNIQUE, PASSWORD TEXT, ADMIN BOOLEAN)");
         db.execSQL("CREATE TABLE "+ marksTableName+ " (ID INTEGER PRIMARY KEY AUTOINCREMENT, STUDENTMARK TEXT, MARKDATE DATE, ADMINID INTEGER)");
         Log.d("onCreacte", "values : creacted");
 
@@ -54,10 +65,12 @@ public class SQLiteDataBase extends SQLiteOpenHelper {
     /// <summary>
     /// User SQLite actions
     /// </summary>
-    public boolean insetNewStudent(String name, String surname) {
+    public boolean insetNewStudent(String email, String password, String name, String surname) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         Log.d("inInsert", "values : " + name + " , " +surname);
+        contentValues.put("EMAIL", email);
+        contentValues.put("PASSWORD", password);
         contentValues.put("NAME", name);
         contentValues.put("SURNAME", surname);
         contentValues.put("ADMIN", false);
@@ -67,9 +80,11 @@ public class SQLiteDataBase extends SQLiteOpenHelper {
         return true;
     }
 
-    public boolean insetNewAdmin(String name, String surname) {
+    public boolean insetNewAdmin(String email, String password, String name, String surname) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
+        contentValues.put("EMAIL", email);
+        contentValues.put("PASSWORD", password);
         contentValues.put("NAME", name);
         contentValues.put("SURNAME", surname);
         contentValues.put("ADMIN", true);
@@ -90,6 +105,14 @@ public class SQLiteDataBase extends SQLiteOpenHelper {
         contentValues.put("MARKID",markId);
         long resolver =db.update(usersTableName,contentValues,"ID = " +studentId,null);
         if (resolver == -1 ) return false;
+        return true;
+    }
+
+    public boolean login(String email,String password) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor resolver = db.rawQuery("SELECT * FROM "+ usersTableName + " WHERE EMAIL  = " + email + " AND PASSWORD = " + password,null);
+        Log.d("SQLite : ", " " + resolver.getColumnCount());
+        // if ( resolver.getColumnCount() ) return true;
         return true;
     }
 

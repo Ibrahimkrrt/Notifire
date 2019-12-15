@@ -1,6 +1,8 @@
 package com.example.oumaima.notifire;
 
 
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -14,16 +16,17 @@ import java.util.Date;
 
 import com.example.oumaima.notifire.models.Mark;
 import com.example.oumaima.notifire.models.User;
+import com.google.gson.Gson;
 
 public class StudentDetails extends AppCompatActivity {
 
-    TextView IdTextView;
-    TextView nameTextView;
-    TextView surnameTextView;
-    TextView markTextView;
-    Button publishMark;
+    public static final String PERSISTENCE_DATA = "persistence";
+
+    TextView IdTextView, nameTextView, surnameTextView, markTextView, adminIdTextView;
+    Button publishMark, back;
     Mark mark;
 
+    User currentUser;
     SQLiteDataBase notifireDatabase;
 
     @Override
@@ -38,32 +41,45 @@ public class StudentDetails extends AppCompatActivity {
         nameTextView = (TextView)findViewById(R.id.name);
         surnameTextView = (TextView)findViewById(R.id.surname);
         markTextView = (TextView)findViewById(R.id.mark);
+        adminIdTextView = (TextView)findViewById(R.id.adminMarkId);
         publishMark = (Button)findViewById(R.id.submitMark);
+        back = (Button)findViewById(R.id.clear);
 
         Log.d("StudntDetail", "Mark Id : " + extraObject.getMarkId());
         if (extraObject.getMarkId() == 0) {
-            markTextView.setHint( "undefined" );
+            markTextView.setHint("undefined");
+            adminIdTextView.setText("undefined");
         }
         else {
-            String publishedMark = getStudentMark(extraObject.getMarkId());
-            markTextView.setText(publishedMark);
+            Mark mark = getStudentMark(extraObject.getMarkId());
+            markTextView.setText(mark.getStudentMark());
+            adminIdTextView.setText(mark.getAdminId());
         }
 
-        IdTextView.setText( Integer.toString(extraObject.getId()) );
+        IdTextView.setText(Integer.toString(extraObject.getId()));
         nameTextView.setText(extraObject.getFirstName());
         surnameTextView.setText(extraObject.getLastName());
 
         publishMark.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-                long insertMarkId = notifireDatabase.insetNewMark(markTextView.getText().toString().trim(),94);
+                loadPersistenceData();
+                long insertMarkId = notifireDatabase.insetNewMark(markTextView.getText().toString().trim(), currentUser.getId());
                 boolean resUpdate = notifireDatabase.updateStudentMarkId(IdTextView.getText().toString().trim(), String.valueOf(insertMarkId));
                 Toast.makeText(StudentDetails.this, insertMarkId + " " + resUpdate,Toast.LENGTH_LONG).show();
+                load();
+            }
+        });
+
+        back.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                load();
             }
         });
     }
 
-    private String getStudentMark(int markId) {
+    private Mark getStudentMark(int markId) {
         Cursor results = notifireDatabase.findMarkById(markId);
         results.moveToFirst();
         while ( !results.isAfterLast() ){
@@ -74,7 +90,18 @@ public class StudentDetails extends AppCompatActivity {
             mark.setAdminId(results.getInt(results.getColumnIndex("ADMINID")));
             results.moveToNext();
         }
-        return mark.getStudentMark();
+        return mark;
     }
 
+    public void loadPersistenceData() {
+        SharedPreferences sharedPreferences = getSharedPreferences(PERSISTENCE_DATA, MODE_PRIVATE);
+        Gson gson = new Gson();
+        String json = sharedPreferences.getString("currentUser", "");
+        currentUser = gson.fromJson(json, User.class);
+    }
+
+    public void load(){
+        Intent intent = new Intent(StudentDetails.this, AllStudent.class);
+        startActivity(intent);
+    }
 }
