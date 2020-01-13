@@ -6,6 +6,8 @@ import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -20,11 +22,11 @@ public class MainActivity extends AppCompatActivity implements AdminRegistryInfo
     public static final String PERSISTENCE_DATA = "persistence";
     public static final String PERSISTENCE_USER_DATA = "currentUser";
 
-    TextView signInText, signUpText;
-    EditText sFistName, sLastName,emailInput,passwordInput;
+    TextView signInText, signUpText, errorText;
+    EditText emailInput,passwordInput;
     Switch ifAdmin;
-    Button clear, create, selectAll,action;
-    boolean signIn;
+    Button action;
+    boolean signIn , authentificationError;
     User user;
 
     SQLiteDataBase notifireDatabase;
@@ -69,17 +71,14 @@ public class MainActivity extends AppCompatActivity implements AdminRegistryInfo
 
         signInText = (TextView)findViewById(R.id.signinText);
         signUpText = (TextView)findViewById(R.id.signupText);
+        errorText = (TextView)findViewById(R.id.error);
         emailInput = (EditText)findViewById(R.id.emailInput);
         passwordInput = (EditText)findViewById(R.id.passwordInput);
-        sFistName = (EditText)findViewById(R.id.sFirstName);
-        sLastName = (EditText)findViewById(R.id.sLastName);
         ifAdmin = (Switch)findViewById(R.id.admin);
-        create = (Button)findViewById(R.id.create);
-        clear = (Button)findViewById(R.id.clear);
-        selectAll = (Button)findViewById(R.id.selectAll);
         action = (Button)findViewById(R.id.actionButton);
 
         signIn = true;
+        authentificationError = true;
 
         user = new User();
 
@@ -87,6 +86,7 @@ public class MainActivity extends AppCompatActivity implements AdminRegistryInfo
             @Override
             public void onClick(View v) {
                 signIn = false;
+                ifAdmin.setVisibility(View.VISIBLE);
                 signInText.setTextColor(Color.parseColor("#AAAAAA"));
                 signUpText.setTextColor(Color.parseColor("#000000"));
                 action.setText("Sign up");
@@ -97,8 +97,10 @@ public class MainActivity extends AppCompatActivity implements AdminRegistryInfo
             @Override
             public void onClick(View v) {
                 signIn = true;
+                ifAdmin.setVisibility(View.INVISIBLE);
                 signUpText.setTextColor(Color.parseColor("#AAAAAA"));
                 signInText.setTextColor(Color.parseColor("#000000"));
+                action.setBackgroundColor(Color.parseColor("#95CF8F"));
                 action.setText("Sign in");
             }
         });
@@ -107,9 +109,13 @@ public class MainActivity extends AppCompatActivity implements AdminRegistryInfo
             @Override
             public void onClick(View v) {
                 if (signIn){
-                    Boolean a = notifireDatabase.login(emailInput.getText().toString().trim(),passwordInput.getText().toString().trim());
-                    // Log.d("MainActivity : "," " + a);
-                    openSelectionActivity();
+                    Boolean authentificationIsValid = notifireDatabase.login(emailInput.getText().toString().trim(),passwordInput.getText().toString().trim());
+                    if ( authentificationIsValid ) {
+                        errorText.setVisibility(View.INVISIBLE);
+                        openSelectionActivity();
+                    }
+                    errorText.setText( "Authentification failed: User name or Password is not register in the database" );
+                    errorText.setVisibility(View.VISIBLE);
                 }
                 else{
                     if(ifAdmin.isChecked()){

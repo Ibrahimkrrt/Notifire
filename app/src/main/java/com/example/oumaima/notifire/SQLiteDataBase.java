@@ -8,6 +8,8 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.util.Calendar;
 import java.util.Date;
 
 
@@ -103,17 +105,18 @@ public class SQLiteDataBase extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put("MARKID",markId);
-        long resolver =db.update(usersTableName,contentValues,"ID = " +studentId,null);
+        long resolver =db.update(marksTableName,contentValues,"ID = " +studentId,null);
         if (resolver == -1 ) return false;
         return true;
     }
 
     public boolean login(String email,String password) {
         SQLiteDatabase db = this.getWritableDatabase();
-        Cursor resolver = db.rawQuery("SELECT * FROM "+ usersTableName + " WHERE EMAIL  = " + email + " AND PASSWORD = " + password,null);
-        Log.d("SQLite : ", " " + resolver.getColumnCount());
-        // if ( resolver.getColumnCount() ) return true;
-        return true;
+        String query = "SELECT * FROM "+ usersTableName + " WHERE EMAIL  = '" + email + "' AND PASSWORD = '" + password +"'";
+        Cursor resolver = db.rawQuery(query,null);
+        Log.d("SQLite : ", "******************* getColumnCount value is = " + resolver.getCount());
+        if ( resolver.getCount() > 0 ) return true;
+        return false;
     }
 
     /// <summary>
@@ -123,11 +126,12 @@ public class SQLiteDataBase extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
 
-        Date today = new Date();
+        Calendar today = Calendar.getInstance();
+
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        Log.d("inInsert", "values : " + mark + " , "+ dateFormat.format(today) + " , " +adminId);
+        Log.d("inInsert", "values : " + mark + " , "+ dateFormat.format(today.getTime()) + " , " +adminId);
         contentValues.put("STUDENTMARK", mark);
-        contentValues.put("MARKDATE", dateFormat.format(today));
+        contentValues.put("MARKDATE", dateFormat.format(today.getTime()));
         contentValues.put("ADMINID", adminId);
         long resolver = db.insert(marksTableName,null, contentValues);
         Log.d("inInsert", "resolver value : " + resolver);

@@ -32,6 +32,8 @@ public class StudentDetails extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         setContentView(R.layout.activity_student_details);
         User extraObject = (User)getIntent().getSerializableExtra("studentData");
         Log.d("StudntDetail", "StudentDetails : " + extraObject.getId());
@@ -43,7 +45,7 @@ public class StudentDetails extends AppCompatActivity {
         markTextView = (TextView)findViewById(R.id.mark);
         adminIdTextView = (TextView)findViewById(R.id.adminMarkId);
         publishMark = (Button)findViewById(R.id.submitMark);
-        back = (Button)findViewById(R.id.clear);
+        back = (Button)findViewById(R.id.back);
 
         Log.d("StudntDetail", "Mark Id : " + extraObject.getMarkId());
         if (extraObject.getMarkId() == 0) {
